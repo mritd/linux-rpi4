@@ -1,17 +1,12 @@
-# Maintainer: Dave Higham <pepedog@archlinuxarm.org>
-# Maintainer: Kevin Mihelich <kevin@archlinuxarm.org>
-# Maintainer: Oleg Rakhmanov <oleg@archlinuxarm.org>
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
-buildarch=20
-
 pkgbase=linux-rpi4
-_commit=395a6a8b68fed103cb1c75d8e224cd4ff2b89bf0
+_commit=246113692edbef9a438b31ab2dd0172a30ed5eb2
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.56
-pkgrel=3
+pkgver=4.19.58
+pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -24,10 +19,10 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook')
-md5sums=('fdd566678cc6bceeb6bbaf84966811bf'
-         '7918dc1221a70a3a8da4030d88ea79db'
+md5sums=('0c407827b2de83558ac0b9947f1b99cc'
+         '7027ddb0a587c090c2f08f6835c9b47a'
          'ef61ff0ee9b2a6873307f620b2a77b06'
-         'ce71d401551ad4b874598c4e134a8b8b'
+         '80eb7f5552f3b93b0abf126bae99fbfa'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
@@ -42,9 +37,12 @@ sed -i s/'CONFIG_AUDIT_WATCH=y'/'CONFIG_AUDIT_WATCH=n'/ config
 sed -i s/'CONFIG_AUDIT_TREE=y'/'CONFIG_AUDIT_TREE=n'/ config
 sed -i s/'CONFIG_AUDIT_GENERIC=y'/'CONFIG_AUDIT_GENERIC=n'/ config
 sed -i s/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=y'/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=n'/ config
-
+  
   cd "${srcdir}/${_srcname}"
-
+  
+  # Manjaro ARM Patches
+ 
+  
   cat "${srcdir}/config" > ./.config
 
   # add pkgrel to extraversion

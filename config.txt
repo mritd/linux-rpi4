@@ -8,3 +8,10 @@ device_tree=broadcom/bcm2711-rpi-4-b.dtb
 enable_gic=1
 armstub=armstub8-gic.bin
 total_mem=1024
+
+#enable sound
+dtparam=audio=on
+
+#enable vc4
+dtoverlay=vc4-fkms-v3d
+max_framebuffers=2
