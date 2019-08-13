@@ -6,7 +6,6 @@ kernel=kernel8.img
 arm_64bit=1
 device_tree=broadcom/bcm2711-rpi-4-b.dtb
 enable_gic=1
-total_mem=3072
 
 #enable sound
 dtparam=audio=on

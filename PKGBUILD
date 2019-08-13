@@ -1,11 +1,11 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=2b3cf6c405f000c7b25953ab138d4dca0acaf74f
+_commit=1f8e54151926498bd1f462d758301669cb354fd0
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.60
+pkgver=4.19.65
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -13,16 +13,18 @@ license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
 options=('!strip')
 source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
+        'pcie-brcmstb-bounce64.patch'
         'config.txt'
         'cmdline.txt'
         'config'
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook')
-md5sums=('ee017cb7263fbb89275b2db38a6d541b'
-         '92f32f2638a8fa710839a216ada6ef10'
+md5sums=('1caacc00fe21290bce00e00ee3cd42d9'
+         '239af64657225bb5e77b4c7622273411'
+         'd83b01f3811e4831384ae931aac088f5'
          '60bc3624123c183305677097bcd56212'
-         '9ea5c08e188d9b07ad3c2ffaf9f4f63e'
+         'fa83f8ba67a22d9be2928ef2d7c1525b'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
@@ -37,11 +39,12 @@ sed -i s/'CONFIG_AUDIT_WATCH=y'/'CONFIG_AUDIT_WATCH=n'/ config
 sed -i s/'CONFIG_AUDIT_TREE=y'/'CONFIG_AUDIT_TREE=n'/ config
 sed -i s/'CONFIG_AUDIT_GENERIC=y'/'CONFIG_AUDIT_GENERIC=n'/ config
 sed -i s/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=y'/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=n'/ config
+sed -i s/'CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y'/'CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y'/ config 
   
   cd "${srcdir}/${_srcname}"
   
   # Manjaro ARM Patches
- 
+  git apply ../pcie-brcmstb-bounce64.patch #ram fix
   
   cat "${srcdir}/config" > ./.config
 
@@ -56,11 +59,11 @@ build() {
   cd "${srcdir}/${_srcname}"
 
   # get kernel version
-  make prepare
+  #make prepare
 
   # load configuration
   # Configure the kernel. Replace the line below with one of your choice.
-  #make menuconfig # CLI menu for configuration
+  make menuconfig # CLI menu for configuration
   #make nconfig # new CLI menu for configuration
   #make xconfig # X-based configuration
   #make oldconfig # using old config from previous kernel version
@@ -68,13 +71,13 @@ build() {
   # ... or manually edit .config
 
   # Copy back our configuration (use with new kernel version)
-  #cp ./.config ../${pkgver}.config
+  cp ./.config /var/tmp/${pkgbase}.config
 
   ####################
   # stop here
   # this is useful to configure the kernel
-  #msg "Stopping build"
-  #return 1
+  msg "Stopping build"
+  return 1
   ####################
 
   #yes "" | make config
