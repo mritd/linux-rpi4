@@ -1,11 +1,11 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=1f8e54151926498bd1f462d758301669cb354fd0
+_commit=73a743bcf8618982afab993a25cc36df0d9d9ae4
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.65
+pkgver=4.19.66
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -13,18 +13,16 @@ license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
 options=('!strip')
 source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
-        'pcie-brcmstb-bounce64.patch'
         'config.txt'
         'cmdline.txt'
         'config'
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook')
-md5sums=('1caacc00fe21290bce00e00ee3cd42d9'
-         '239af64657225bb5e77b4c7622273411'
-         'd83b01f3811e4831384ae931aac088f5'
+md5sums=('25a2dc6a4a935f05023a81e169156998'
+         'af2d6c139b3073edc9eb0b93b65a3411'
          '60bc3624123c183305677097bcd56212'
-         'fa83f8ba67a22d9be2928ef2d7c1525b'
+         '0659db1ced863862116035128edbc17a'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
@@ -44,7 +42,7 @@ sed -i s/'CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y'/'CONFIG_CPU_FREQ_DEFAULT_GOV_
   cd "${srcdir}/${_srcname}"
   
   # Manjaro ARM Patches
-  git apply ../pcie-brcmstb-bounce64.patch #ram fix
+
   
   cat "${srcdir}/config" > ./.config
 
