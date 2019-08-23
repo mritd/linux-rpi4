@@ -1,3 +1,6 @@
+# Contributor: Dave Higham <pepedog@archlinuxarm.org>
+# Contributor: Kevin Mihelich <kevin@archlinuxarm.org>
+# Contributor: Oleg Rakhmanov <oleg@archlinuxarm.org>
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
