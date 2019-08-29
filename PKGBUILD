@@ -4,11 +4,11 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=73a743bcf8618982afab993a25cc36df0d9d9ae4
+_commit=d9a27b27450d9f81b567134f1c8b85401556ab5a
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.66
+pkgver=4.19.68
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -22,25 +22,25 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook')
-md5sums=('25a2dc6a4a935f05023a81e169156998'
+md5sums=('93926bb166e9dfc3f818400e1e6387ac'
          'af2d6c139b3073edc9eb0b93b65a3411'
          '60bc3624123c183305677097bcd56212'
-         '0659db1ced863862116035128edbc17a'
+         'a57f815a92e9962cd8f387e9c71c66d7'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
 
 prepare() {
-sed -i s/'CONFIG_LOCALVERSION="-v8"'/'CONFIG_LOCALVERSION="-MANJARO-ARM"'/ config
-sed -i s/'# CONFIG_NTFS_FS is not set'/'CONFIG_NTFS_FS=y\nCONFIG_NTFS_RW=y\nCONFIG_NTFS_DEBUG=n'/ config
-sed -i s/'CONFIG_AUDIT=y'/'CONFIG_AUDIT=n'/ config
+#sed -i s/'CONFIG_LOCALVERSION="-v8"'/'CONFIG_LOCALVERSION="-MANJARO-ARM"'/ config
+#sed -i s/'# CONFIG_NTFS_FS is not set'/'CONFIG_NTFS_FS=y\nCONFIG_NTFS_RW=y\nCONFIG_NTFS_DEBUG=n'/ config
+#sed -i s/'CONFIG_AUDIT=y'/'CONFIG_AUDIT=n'/ config
 sed -i s/'CONFIG_HAVE_ARCH_AUDITSYSCALL=y'/'CONFIG_HAVE_ARCH_AUDITSYSCALL=n'/ config
 sed -i s/'CONFIG_AUDITSYSCALL=y'/'CONFIG_AUDITSYSCALL=n'/ config
 sed -i s/'CONFIG_AUDIT_WATCH=y'/'CONFIG_AUDIT_WATCH=n'/ config
 sed -i s/'CONFIG_AUDIT_TREE=y'/'CONFIG_AUDIT_TREE=n'/ config
 sed -i s/'CONFIG_AUDIT_GENERIC=y'/'CONFIG_AUDIT_GENERIC=n'/ config
 sed -i s/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=y'/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=n'/ config
-sed -i s/'CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y'/'CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y'/ config 
+#sed -i s/'CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y'/'CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y'/ config 
   
   cd "${srcdir}/${_srcname}"
   

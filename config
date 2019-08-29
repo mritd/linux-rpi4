@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.19.65-1 Kernel Configuration
+# Linux/arm64 4.19.68-1 Kernel Configuration
 #
 
 #
@@ -6356,7 +6356,8 @@ CONFIG_CRYPTO_DES=y
 # CONFIG_CRYPTO_SERPENT is not set
 # CONFIG_CRYPTO_SM4 is not set
 # CONFIG_CRYPTO_TEA is not set
-# CONFIG_CRYPTO_TWOFISH is not set
+CONFIG_CRYPTO_TWOFISH=m
+CONFIG_CRYPTO_TWOFISH_COMMON=m
 
 #
 # Compression
