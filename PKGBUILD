@@ -9,7 +9,7 @@ _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
 pkgver=4.19.69
-pkgrel=2
+pkgrel=3
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -25,7 +25,7 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
 md5sums=('55219e8a2df1fae777bae22713692026'
          'af2d6c139b3073edc9eb0b93b65a3411'
          '60bc3624123c183305677097bcd56212'
-         '0ab104ffa8c821c637221a978efbaeb0'
+         '5bca4746a1d0416af32f5e1e0fc5c43c'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
@@ -58,7 +58,7 @@ build() {
   # ... or manually edit .config
 
   # Copy back our configuration (use with new kernel version)
-  #cp ./.config ../${pkgver}.config
+  #cp ./.config /var/tmp/${pkgbase}.config
 
   ####################
   # stop here
