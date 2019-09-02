@@ -9,7 +9,7 @@ _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
 pkgver=4.19.69
-pkgrel=1
+pkgrel=2
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -31,21 +31,8 @@ md5sums=('55219e8a2df1fae777bae22713692026'
          '441ec084c47cddc53e592fb0cbce4edf')
 
 prepare() {
-#sed -i s/'CONFIG_LOCALVERSION="-ARCH"'/'CONFIG_LOCALVERSION="-MANJARO-ARM"'/ config
-#sed -i s/'# CONFIG_NTFS_FS is not set'/'CONFIG_NTFS_FS=y\nCONFIG_NTFS_RW=y\nCONFIG_NTFS_DEBUG=n'/ config
-#sed -i s/'CONFIG_AUDIT=y'/'CONFIG_AUDIT=n'/ config
-#sed -i s/'CONFIG_HAVE_ARCH_AUDITSYSCALL=y'/'CONFIG_HAVE_ARCH_AUDITSYSCALL=n'/ config
-#sed -i s/'CONFIG_AUDITSYSCALL=y'/'CONFIG_AUDITSYSCALL=n'/ config
-#sed -i s/'CONFIG_AUDIT_WATCH=y'/'CONFIG_AUDIT_WATCH=n'/ config
-#sed -i s/'CONFIG_AUDIT_TREE=y'/'CONFIG_AUDIT_TREE=n'/ config
-#sed -i s/'CONFIG_AUDIT_GENERIC=y'/'CONFIG_AUDIT_GENERIC=n'/ config
-#sed -i s/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=y'/'CONFIG_AUDIT_ARCH_COMPAT_GENERIC=n'/ config
-  
   cd "${srcdir}/${_srcname}"
-  
-  # Manjaro ARM Patches
 
-  
   cat "${srcdir}/config" > ./.config
 
   # add pkgrel to extraversion
@@ -71,7 +58,7 @@ build() {
   # ... or manually edit .config
 
   # Copy back our configuration (use with new kernel version)
-  #cp ./.config /var/tmp/${pkgbase}.config
+  #cp ./.config ../${pkgver}.config
 
   ####################
   # stop here
@@ -82,12 +69,7 @@ build() {
 
   #yes "" | make config
 
-
-  # build!
-  unset LDFLAGS
   make ${MAKEFLAGS} Image modules dtbs
-  # Generate device tree blobs with symbols to support applying device tree overlays in U-Boot
-  #make ${MAKEFLAGS} DTC_FLAGS="-@" dtbs
 }
 
 _package() {
@@ -113,11 +95,7 @@ _package() {
   make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
   make INSTALL_DTBS_PATH="${pkgdir}/boot" dtbs_install
 
-  [[ $CARCH == "armv6h" ]] && cp arch/$KARCH/boot/zImage "${pkgdir}/boot/kernel.img" \
-                           && rm -f "${pkgdir}"/boot/bcm{2836,2709,2710,2711}*.dtb
-  [[ $CARCH == "armv7h" ]] && cp arch/$KARCH/boot/zImage "${pkgdir}/boot/kernel7.img" \
-                           && rm -f "${pkgdir}"/boot/bcm{2835,2708}*.dtb
-  [[ $CARCH == "aarch64" ]] && cp arch/$KARCH/boot/Image "${pkgdir}/boot/kernel8.img"
+  cp arch/$KARCH/boot/Image "${pkgdir}/boot/kernel8.img"
   cp arch/$KARCH/boot/dts/overlays/README "${pkgdir}/boot/overlays"
 
   # make room for external modules
@@ -161,104 +139,65 @@ _package-headers() {
   conflicts=('linux-headers')
   replaces=('linux-raspberrypi-latest-headers')
 
-  install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
+  cd ${_srcname}
+  local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
-  cd "${srcdir}/${_srcname}"
-  install -D -m644 Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Makefile"
-  install -D -m644 kernel/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/kernel/Makefile"
-  install -D -m644 .config \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/.config"
+  install -Dt "${_builddir}" -m644 Makefile .config Module.symvers
+  install -Dt "${_builddir}/kernel" -m644 kernel/Makefile
 
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include"
+  mkdir "${_builddir}/.tmp_versions"
 
-  for i in acpi asm-generic config crypto drm generated keys linux math-emu \
-    media net pcmcia scsi soc sound trace uapi video xen; do
-    cp -a include/${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/include/"
-  done
+  cp -t "${_builddir}" -a include scripts
 
-  # copy arch includes for external modules
-  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH
-  cp -a arch/$KARCH/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/
+  install -Dt "${_builddir}/arch/${KARCH}" -m644 arch/${KARCH}/Makefile
+  install -Dt "${_builddir}/arch/${KARCH}/kernel" -m644 arch/${KARCH}/kernel/asm-offsets.s arch/$KARCH/kernel/module.lds
 
-  # copy files necessary for later builds, like nvidia and vmware
-  cp Module.symvers "${pkgdir}/usr/lib/modules/${_kernver}/build"
-  cp -a scripts "${pkgdir}/usr/lib/modules/${_kernver}/build"
+  cp -t "${_builddir}/arch/${KARCH}" -a arch/${KARCH}/include
 
-  # fix permissions on scripts dir
-  chmod og-w -R "${pkgdir}/usr/lib/modules/${_kernver}/build/scripts"
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/.tmp_versions"
+  install -Dt "${_builddir}/drivers/md" -m644 drivers/md/*.h
+  install -Dt "${_builddir}/net/mac80211" -m644 net/mac80211/*.h
 
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel"
-
-  cp arch/${KARCH}/Makefile "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/"
-
-  cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
-
-  # add dm headers
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
-  cp drivers/md/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
-
-  # add inotify.h
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/linux"
-  cp include/linux/inotify.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/linux/"
-
-  # add wireless headers
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/net/mac80211/"
-  cp net/mac80211/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/net/mac80211/"
-
-  # add dvb headers for external modules
-  # in reference to:
-  # http://bugs.archlinux.org/task/11194
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
-  cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
-
-  # add dvb headers for http://mcentral.de/hg/~mrec/em28xx-new
-  # in reference to:
   # http://bugs.archlinux.org/task/13146
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
-  cp drivers/media/dvb-frontends/lgdt330x.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/i2c/"
-  cp drivers/media/i2c/msp3400-driver.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/i2c/"
+  install -Dt "${_builddir}/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-  # add dvb headers
-  # in reference to:
   # http://bugs.archlinux.org/task/20402
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/usb/dvb-usb"
-  cp drivers/media/usb/dvb-usb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/usb/dvb-usb/"
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends"
-  cp drivers/media/dvb-frontends/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/tuners"
-  cp drivers/media/tuners/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/tuners/"
+  install -Dt "${_builddir}/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+  install -Dt "${_builddir}/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+  install -Dt "${_builddir}/drivers/media/tuners" -m644 drivers/media/tuners/*.h
 
   # add xfs and shmem for aufs building
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs"
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/mm"
+  mkdir -p "${_builddir}"/{fs/xfs,mm}
 
   # copy in Kconfig files
-  for i in $(find . -name "Kconfig*"); do
-    mkdir -p "${pkgdir}"/usr/lib/modules/${_kernver}/build/`echo ${i} | sed 's|/Kconfig.*||'`
-    cp ${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/${i}"
-  done
-
-  chown -R root.root "${pkgdir}/usr/lib/modules/${_kernver}/build"
-  find "${pkgdir}/usr/lib/modules/${_kernver}/build" -type d -exec chmod 755 {} \;
-
-  # strip scripts directory
-  find "${pkgdir}/usr/lib/modules/${_kernver}/build/scripts" -type f -perm -u+w 2>/dev/null | while read binary ; do
-    case "$(file -bi "${binary}")" in
-      *application/x-sharedlib*) # Libraries (.so)
-        /usr/bin/strip ${STRIP_SHARED} "${binary}";;
-      *application/x-archive*) # Libraries (.a)
-        /usr/bin/strip ${STRIP_STATIC} "${binary}";;
-      *application/x-executable*) # Binaries
-        /usr/bin/strip ${STRIP_BINARIES} "${binary}";;
-    esac
-  done
+  find . -name Kconfig\* -exec install -Dm644 {} "${_builddir}/{}" \;
 
   # remove unneeded architectures
-  rm -rf "${pkgdir}"/usr/lib/modules/${_kernver}/build/arch/{alpha,arc,arm26,arm,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,metag,mips,microblaze,mn10300,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,x86,xtensa}
+  local _arch
+  for _arch in "${_builddir}"/arch/*/; do
+    [[ ${_arch} == */${KARCH}/ ]] && continue
+    rm -r "${_arch}"
+  done
+
+  # remove files already in linux-docs package
+  rm -r "${_builddir}/Documentation"
+
+  # remove now broken symlinks
+  find -L "${_builddir}" -type l -printf 'Removing %P\n' -delete
+
+  # Fix permissions
+  chmod -R u=rwX,go=rX "${_builddir}"
+
+  # strip scripts directory
+  local _binary _strip
+  while read -rd '' _binary; do
+    case "$(file -bi "${_binary}")" in
+      *application/x-sharedlib*)  _strip="${STRIP_SHARED}"   ;; # Libraries (.so)
+      *application/x-archive*)    _strip="${STRIP_STATIC}"   ;; # Libraries (.a)
+      *application/x-executable*) _strip="${STRIP_BINARIES}" ;; # Binaries
+      *) continue ;;
+    esac
+    /usr/bin/strip ${_strip} "${_binary}"
+  done < <(find "${_builddir}/scripts" -type f -perm -u+w -print0 2>/dev/null)
 }
 
 pkgname=("${pkgbase}" "${pkgbase}-headers")
