@@ -9,6 +9,7 @@ enable_gic=1
 
 #enable sound
 dtparam=audio=on
+hdmi_drive=2
 
 #enable vc4
 dtoverlay=vc4-fkms-v3d
