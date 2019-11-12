@@ -4,11 +4,11 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=3492a1b003494535eb1b17aa7f258469036b1de7
+_commit=3c235dcfe80a7c7ba360219e4a3ecb256f294376
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.80
+pkgver=4.19.83
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -35,10 +35,10 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         '0011-bootsplash.patch'
         '0012-bootsplash.patch'
         '0013-bootsplash.patch')
-md5sums=('a97fccb85284d141dc0cf4446c12d5ca'
-         '2619ea78bc60292ab7e0764e446679c8'
+md5sums=('94b99a808a28348c614e02dbaa02303b'
+         'd100765c77a7c03a445193a79b4612a1'
          '82f51ed0e475640eca70cb4778e13581'
-         '85b9aa9c865b96d0e900f92a8eeab3eb'
+         '3dc89b06c0831b4393115f9bfeb11a9a'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf'
@@ -133,11 +133,15 @@ _package() {
   _basekernel=${_kernver%%-*}
   _basekernel=${_basekernel%.*}
 
-  mkdir -p "${pkgdir}"/{boot,usr/lib/modules}
+  mkdir -p "${pkgdir}"/{boot/overlays,usr/lib/modules}
   make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
   make INSTALL_DTBS_PATH="${pkgdir}/boot" dtbs_install
 
+  cp arch/$KARCH/boot/dts/broadcom/bcm2711-rpi-4-b.dtb "${pkgdir}/boot"
+  cp arch/$KARCH/boot/dts/broadcom/bcm2710-rpi-3-b-plus.dtb "${pkgdir}/boot"
+  cp arch/$KARCH/boot/dts/broadcom/bcm2710-rpi-3-b.dtb "${pkgdir}/boot"
   cp arch/$KARCH/boot/Image "${pkgdir}/boot/kernel8.img"
+  cp arch/$KARCH/boot/dts/overlays/*.dtbo* "${pkgdir}/boot/overlays"
   cp arch/$KARCH/boot/dts/overlays/README "${pkgdir}/boot/overlays"
 
   # make room for external modules
