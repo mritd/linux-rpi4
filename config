@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.19.86-1 Kernel Configuration
+# Linux/arm64 4.19.88-1 Kernel Configuration
 #
 
 #
@@ -1568,7 +1568,9 @@ CONFIG_RFKILL_INPUT=y
 CONFIG_NET_9P=m
 # CONFIG_NET_9P_DEBUG is not set
 # CONFIG_CAIF is not set
-# CONFIG_CEPH_LIB is not set
+CONFIG_CEPH_LIB=m
+# CONFIG_CEPH_LIB_PRETTYDEBUG is not set
+# CONFIG_CEPH_LIB_USE_DNS_RESOLVER is not set
 CONFIG_NFC=m
 # CONFIG_NFC_DIGITAL is not set
 # CONFIG_NFC_NCI is not set
@@ -1785,7 +1787,7 @@ CONFIG_CDROM_PKTCDVD=m
 CONFIG_CDROM_PKTCDVD_BUFFERS=8
 # CONFIG_CDROM_PKTCDVD_WCACHE is not set
 CONFIG_ATA_OVER_ETH=m
-# CONFIG_BLK_DEV_RBD is not set
+CONFIG_BLK_DEV_RBD=m
 # CONFIG_BLK_DEV_RSXX is not set
 
 #
@@ -2070,6 +2072,7 @@ CONFIG_NET_VENDOR_ALTEON=y
 # CONFIG_ACENIC is not set
 # CONFIG_ALTERA_TSE is not set
 CONFIG_NET_VENDOR_AMAZON=y
+# CONFIG_ENA_ETHERNET is not set
 CONFIG_NET_VENDOR_AMD=y
 # CONFIG_AMD8111_ETH is not set
 # CONFIG_PCNET32 is not set
