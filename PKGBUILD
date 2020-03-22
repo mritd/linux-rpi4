@@ -4,11 +4,11 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=63739afcdd3662e9f9e1f04c81b63b743a12f9d1
+_commit=06606627043f72d22881563d485268fec2acd56d
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.97
+pkgver=4.19.108
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -22,59 +22,18 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook'
-        '0001-bootsplash.patch'
-        '0002-bootsplash.patch'
-        '0003-bootsplash.patch'
-        '0004-bootsplash.patch'
-        '0005-bootsplash.patch'
-        '0006-bootsplash.patch'
-        '0007-bootsplash.patch'
-        '0008-bootsplash.patch'
-        '0009-bootsplash.patch'
-        '0010-bootsplash.patch'
-        '0011-bootsplash.patch'
-        '0012-bootsplash.patch'
-        '0013-bootsplash.patch')
-md5sums=('abb7acb0bc7077ef8ccba1107a9371ca'
+)
+
+md5sums=('7af50c4c3847f96f4d051e786cd3b01b'
          'd100765c77a7c03a445193a79b4612a1'
          '82f51ed0e475640eca70cb4778e13581'
-         'c5861611b78ca0bd0a2bff730bdfcf59'
+         '45e9f58d5af1c2e971d4449a2a178cb8'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
-         '441ec084c47cddc53e592fb0cbce4edf'
-         'f13cfcd8a4667ecca68bccefee4b8283'
-         'b4acd66a564af83b5409738c40b4a566'
-         'a6407dceae1838f5aa27450401a91be6'
-         'cb78b1c11b917a4d31c4b1567183b76f'
-         '3efea575da7f02ba94789d3b6b81e11f'
-         'a7ca21bdbc5b3ea71bfb6eeb4e598c1f'
-         'efd2367798cc4eab0e15fc0ae44fb003'
-         '50255aac36e002afa477e4527a0550af'
-         '6b6def41b404422dc04b39e2f1adffc8'
-         '1922e3a7727d2bf51641b98d6d354738'
-         'd6b7e4e43e42128cf950251e0d0aee23'
-         'ecfd8a30c480149005fcf349e4d06f4b'
-         '2ead9aa2df230c83539e3ebf6b796b18')
+         '441ec084c47cddc53e592fb0cbce4edf')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
-
-  # Manjaro-ARM patches
-  # Bootsplash patches
-  patch -Np1 -i "${srcdir}/0001-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0002-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0003-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0004-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0005-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0006-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0007-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0008-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0009-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0010-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0011-bootsplash.patch"
-  patch -Np1 -i "${srcdir}/0012-bootsplash.patch"
-  git apply -p1 < "${srcdir}/0013-bootsplash.patch"
-  
   cat "${srcdir}/config" > ./.config
 
   # add pkgrel to extraversion
@@ -135,7 +94,6 @@ _package() {
 
   mkdir -p "${pkgdir}"/{boot/overlays,usr/lib/modules}
   make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
-  make INSTALL_DTBS_PATH="${pkgdir}/boot" dtbs_install
 
   cp arch/$KARCH/boot/dts/broadcom/bcm2711-rpi-4-b.dtb "${pkgdir}/boot"
   cp arch/$KARCH/boot/dts/broadcom/bcm2710-rpi-3-b-plus.dtb "${pkgdir}/boot"
