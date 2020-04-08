@@ -4,12 +4,12 @@
 # Maintainer: Dan Johansen <strit@manjaro.org>
 
 pkgbase=linux-rpi4
-_commit=4f2a4cc501c428c940549f39d5562e60404ac4f7
+_commit=e2efb9193948e20cd6e017a6331354b4028bf398
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi 4 64-bit kernel"
-pkgver=4.19.113
-pkgrel=3
+pkgver=4.19.114
+pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -24,10 +24,10 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         '90-linux.hook'
 )
 
-md5sums=('f56df887bc73557da2f25910eccece66'
+md5sums=('c273aabd4bcd7d5efcfc264dca2074db'
          'd100765c77a7c03a445193a79b4612a1'
          '82f51ed0e475640eca70cb4778e13581'
-         '99ad5772c781263d3fdf4b64e096376d'
+         '7910b4c421c04dc7a473c57f1c43a4fc'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
