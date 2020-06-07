@@ -28,7 +28,7 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
 md5sums=('1adf347bbf5474821d1ac49f6c0917de'
          'd100765c77a7c03a445193a79b4612a1'
          '82f51ed0e475640eca70cb4778e13581'
-         'b6b89b524538eb848e48c2d413d9b89b'
+         '03183bf24a0809fa943158c2341ec5d3'
          '86d4a35722b5410e3b29fc92dae15d4b'
          'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '441ec084c47cddc53e592fb0cbce4edf')
